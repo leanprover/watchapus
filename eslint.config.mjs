@@ -44,10 +44,11 @@ export default defineConfig([
       ],
       "import/no-import-module-exports": "error",
       "import/no-named-as-default": "error",
-      "import/no-named-as-default-member": "off",
+      "import/no-named-as-default-member": "off", // warn -> off (produces some false positives)
       "no-console": "warn",
       "no-param-reassign": "error",
       "no-throw-literal": "error",
+      "no-unnecessary-type-assertion": "error",
       "no-unused-vars": ["error", { args: "none", caughtErrors: "none" }],
     },
   },
@@ -118,7 +119,9 @@ export default defineConfig([
         },
       ],
       "@typescript-eslint/restrict-template-expressions": "off", // always allow `${x}` regardless of x's type
-      "@typescript-eslint/no-unsafe-member-access": ["error", { allowOptionalChaining: true }],
+      "@typescript-eslint/no-unnecessary-condition": "error",
+      "@typescript-eslint/no-unsafe-member-access": ["error", { allowOptionalChaining: true }], // optional chaining helps with tests
+      "@typescript-eslint/use-unknown-in-catch-callback-variable": "error",
     },
   },
   {

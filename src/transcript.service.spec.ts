@@ -58,8 +58,8 @@ describe(`addGrade()`, () => {
     const id2 = db.addStudent("Darol");
     db.addGrade(id1, "Math", 91);
     db.addGrade(id2, "Math", 87);
-    expect(db.getTranscript(id1)?.grades).toStrictEqual([{ course: "Math", grade: 91 }]);
-    expect(db.getTranscript(id2)?.grades).toStrictEqual([{ course: "Math", grade: 87 }]);
+    expect(db.getTranscript(id1).grades).toStrictEqual([{ course: "Math", grade: 91 }]);
+    expect(db.getTranscript(id2).grades).toStrictEqual([{ course: "Math", grade: 87 }]);
   });
 
   it(`should permit multiple grades for a single class`, () => {

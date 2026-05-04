@@ -9,11 +9,7 @@ export class TranscriptDB {
   /**
    * The last assigned student ID
    */
-  private _lastID: number;
-
-  constructor() {
-    this._lastID = 0;
-  }
+  private _lastID: number = 0;
 
   /**
    * Adds a new student to the database
