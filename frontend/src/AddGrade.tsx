@@ -23,7 +23,7 @@ export default function AddGrade({ visible }: AddGradeProps) {
             .then((res) =>
               setFeedback(`Added grade of ${courseGrade} in ${courseName} successfully`),
             )
-            .catch((err) => setFeedback(`${err}`));
+            .catch((err: unknown) => setFeedback(`${err}`));
         }}
       >
         <label htmlFor="studentIdForAddGrade">Student ID:</label>

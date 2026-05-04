@@ -21,7 +21,7 @@ export default function AddStudent({ visible }: AddStudentProps) {
             .then((res) =>
               setFeedback(`Record created for student '${name}' with ID ${res.studentID}`),
             )
-            .catch((err) => setFeedback(`${err}`));
+            .catch((err: unknown) => setFeedback(`${err}`));
         }}
       >
         <label htmlFor="studentName">Enter new student's name:</label>

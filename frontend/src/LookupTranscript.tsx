@@ -29,7 +29,7 @@ export default function LookupTranscript({ visible }: LookupTranscriptProps) {
           ev.preventDefault();
           getTranscript(password, studentID)
             .then((res) => setFeedback(res))
-            .catch((err) => setFeedback({ error: `${err}` }));
+            .catch((err: unknown) => setFeedback({ error: `${err}` }));
         }}
       >
         <label htmlFor="idToView">Enter student id to view:</label>
