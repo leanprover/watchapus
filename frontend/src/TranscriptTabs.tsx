@@ -15,7 +15,7 @@ const TRANSCRIPT_TABS: TabInfo[] = [
 ];
 
 export default function TranscriptTabs() {
-  const [currentTab, setCurrentTab] = useState(TRANSCRIPT_TABS[0].key);
+  const [currentTab, setCurrentTab] = useState(TRANSCRIPT_TABS[0]!.key);
 
   return (
     <div style={{ marginTop: "1em" }}>
