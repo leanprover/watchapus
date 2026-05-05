@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { usePasswordContext } from "./PasswordContext.ts";
-import { getTranscript } from "./service.ts";
+import { getTranscript, serviceErrorToStr } from "./service.ts";
 
 interface LookupTranscriptProps {
   visible: boolean;
@@ -29,7 +29,7 @@ export default function LookupTranscript({ visible }: LookupTranscriptProps) {
           ev.preventDefault();
           getTranscript(password, studentID)
             .then((res) => setFeedback(res))
-            .catch((err: unknown) => setFeedback({ error: `${err}` }));
+            .catch((err: unknown) => setFeedback({ error: serviceErrorToStr(err) }));
         }}
       >
         <label htmlFor="idToView">Enter student id to view:</label>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addStudent } from "./service.ts";
+import { addStudent, serviceErrorToStr } from "./service.ts";
 import { usePasswordContext } from "./PasswordContext.ts";
 
 interface AddStudentProps {
@@ -21,7 +21,7 @@ export default function AddStudent({ visible }: AddStudentProps) {
             .then((res) =>
               setFeedback(`Record created for student '${name}' with ID ${res.studentID}`),
             )
-            .catch((err: unknown) => setFeedback(`${err}`));
+            .catch((err: unknown) => setFeedback(serviceErrorToStr(err)));
         }}
       >
         <label htmlFor="studentName">Enter new student's name:</label>

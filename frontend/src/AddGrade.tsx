@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addGrade } from "./service.ts";
+import { addGrade, serviceErrorToStr } from "./service.ts";
 import { usePasswordContext } from "./PasswordContext.ts";
 
 interface AddGradeProps {
@@ -23,7 +23,7 @@ export default function AddGrade({ visible }: AddGradeProps) {
             .then((res) =>
               setFeedback(`Added grade of ${courseGrade} in ${courseName} successfully`),
             )
-            .catch((err: unknown) => setFeedback(`${err}`));
+            .catch((err: unknown) => setFeedback(serviceErrorToStr(err)));
         }}
       >
         <label htmlFor="studentIdForAddGrade">Student ID:</label>
