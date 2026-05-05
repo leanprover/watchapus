@@ -41,9 +41,9 @@ export default function TranscriptTabs() {
         />
       </div>
       <div style={{ width: "auto", border: "2px solid lightgray", borderTop: 0, padding: "1em" }}>
-        <AddStudent visible={currentTab === "new-student"} />
-        <AddGrade visible={currentTab === "new-grade"} />
-        <LookupTranscript visible={currentTab === "view"} />
+        {currentTab === "new-student" && <AddStudent />}
+        {currentTab === "new-grade" && <AddGrade />}
+        {currentTab === "view" && <LookupTranscript />}
       </div>
     </div>
   );

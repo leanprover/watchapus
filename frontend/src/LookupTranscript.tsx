@@ -2,10 +2,7 @@ import { useState } from "react";
 import { usePasswordContext } from "./PasswordContext.ts";
 import { getTranscript, serviceErrorToStr } from "./service.ts";
 
-interface LookupTranscriptProps {
-  visible: boolean;
-}
-export default function LookupTranscript({ visible }: LookupTranscriptProps) {
+export default function LookupTranscript() {
   const [feedback, setFeedback] = useState<
     | null
     | { error: string }
@@ -21,7 +18,6 @@ export default function LookupTranscript({ visible }: LookupTranscriptProps) {
   const [studentID, setStudentID] = useState("");
   const password = usePasswordContext();
 
-  if (!visible) return null;
   return (
     <>
       <form

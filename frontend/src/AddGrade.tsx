@@ -2,27 +2,20 @@ import { useState } from "react";
 import { addGrade, serviceErrorToStr } from "./service.ts";
 import { usePasswordContext } from "./PasswordContext.ts";
 
-interface AddGradeProps {
-  visible: boolean;
-}
-
-export default function AddGrade({ visible }: AddGradeProps) {
+export default function AddGrade() {
   const [feedback, setFeedback] = useState<null | string>(null);
   const [studentID, setStudentID] = useState("");
   const [courseName, setCourseName] = useState("");
   const [courseGrade, setCourseGrade] = useState("");
   const password = usePasswordContext();
 
-  if (!visible) return null;
   return (
     <>
       <form
         onSubmit={(ev) => {
           ev.preventDefault();
           addGrade(password, studentID, courseName, courseGrade)
-            .then((res) =>
-              setFeedback(`Added grade of ${courseGrade} in ${courseName} successfully`),
-            )
+            .then(() => setFeedback(`Added grade of ${courseGrade} in ${courseName} successfully`))
             .catch((err: unknown) => setFeedback(serviceErrorToStr(err)));
         }}
       >

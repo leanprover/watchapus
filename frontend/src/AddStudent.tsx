@@ -2,16 +2,11 @@ import { useState } from "react";
 import { addStudent, serviceErrorToStr } from "./service.ts";
 import { usePasswordContext } from "./PasswordContext.ts";
 
-interface AddStudentProps {
-  visible: boolean;
-}
-
-export default function AddStudent({ visible }: AddStudentProps) {
+export default function AddStudent() {
   const [feedback, setFeedback] = useState<null | string>(null);
   const [name, setName] = useState<string>("");
   const password = usePasswordContext();
 
-  if (!visible) return null;
   return (
     <>
       <form
