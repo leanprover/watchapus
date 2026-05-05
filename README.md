@@ -9,7 +9,7 @@ in spring of 2026.
 This project has two parts:
 
 1.  A minimal Express transcript API for a very simple transcript server
-2.  A Vite frontend for a simple React application code that calls that server
+2.  A Vite frontend for a simple React application that uses the API server
     (this lives in the `./frontend` directory)
 
 The way this project runs in "production mode" versus "development mode" is
