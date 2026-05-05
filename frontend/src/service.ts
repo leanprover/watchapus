@@ -14,7 +14,7 @@ const zStudentID = z
   .string()
   .regex(z.regexes.integer)
   .transform((str) => Number.parseInt(str, 10))
-  .pipe(z.int().gt(0));
+  .pipe(z.int());
 
 const zAddStudentResponse = z.object({ studentID: z.int() });
 /**
@@ -52,7 +52,7 @@ const zAddGradeResponse = z.discriminatedUnion("success", [
  * Validate inputs and call the `addGrade` api
  *
  * @param password - credentials
- * @param studentIDStr - student ID (error if not a positive integer)
+ * @param studentIDStr - student ID
  * @param courseName - course name (can be any non-empty string)
  * @param courseGradeStr - course grade (error if not a number between 0 and 100, inclusive)
  * @returns successful API response
@@ -111,7 +111,7 @@ const zGetTranscriptResponse = z.discriminatedUnion("success", [
  * Validate inputs and call the `getTranscript` API
  *
  * @param password - credentials
- * @param studentIDStr - student ID (error if not a positive integer)
+ * @param studentIDStr - student ID
  * @returns successful API response
  * @throws if validation fails or there is an API response error
  */
