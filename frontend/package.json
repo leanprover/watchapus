@@ -1,5 +1,5 @@
 {
-  "name": "@cs4530-workspaces/frontend",
+  "name": "@sourdough/frontend",
   "version": "1.0.0",
   "description": "CS4530 Template",
   "type": "module",
@@ -15,7 +15,7 @@
   },
   "author": "Rob Simmons",
   "dependencies": {
-    "@cs4530-workspaces/shared": "^1.0.0",
+    "@sourdough/shared": "^1.0.0",
     "express": "^5.2.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",

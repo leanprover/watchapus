@@ -1,9 +1,4 @@
-import {
-  type StudentID,
-  type Student,
-  type Course,
-  type Transcript,
-} from "@cs4530-workspaces/shared";
+import { type StudentID, type Student, type Course, type Transcript } from "@sourdough/shared";
 
 export class TranscriptDB {
   /**
