@@ -1,4 +1,4 @@
-import { type StudentID, type Student, type Course, type Transcript } from "@sourdough/shared";
+import { type Course, type Student, type StudentID, type Transcript } from "@sourdough/shared";
 
 export class TranscriptDB {
   /**

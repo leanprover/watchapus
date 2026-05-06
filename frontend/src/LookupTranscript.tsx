@@ -1,7 +1,8 @@
+import type { Transcript } from "@sourdough/shared";
 import { useState } from "react";
+
 import { usePasswordContext } from "./PasswordContext.ts";
 import { getTranscript, serviceErrorToStr } from "./service.ts";
-import type { Transcript } from "@sourdough/shared";
 
 export default function LookupTranscript() {
   const [feedback, setFeedback] = useState<
