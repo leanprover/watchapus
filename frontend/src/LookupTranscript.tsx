@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { z } from "zod";
+
 import { usePasswordContext } from "./PasswordContext.ts";
 import { getTranscript, serviceErrorToStr, zTranscript } from "./service.ts";
-import { z } from "zod";
 
 export default function LookupTranscript() {
   const [feedback, setFeedback] = useState<

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import AddStudent from "./AddStudent.tsx";
+
 import AddGrade from "./AddGrade.tsx";
+import AddStudent from "./AddStudent.tsx";
 import LookupTranscript from "./LookupTranscript.tsx";
 
 const TRANSCRIPT_TABS = [
