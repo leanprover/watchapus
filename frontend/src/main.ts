@@ -1,5 +1,6 @@
-import { addGrade, addStudent, getTranscript, serviceErrorToStr } from "./service.ts";
 import "./style.css";
+
+import { addGrade, addStudent, getTranscript, serviceErrorToStr } from "./service.ts";
 
 const showNewStudentDiv = document.querySelector<HTMLDivElement>("#showNewStudent")!;
 document.querySelector<HTMLFormElement>("#addStudent")!.onsubmit = (ev) => {
