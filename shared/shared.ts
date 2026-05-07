@@ -34,7 +34,7 @@ export const zGetTranscriptResponse = z.discriminatedUnion("success", [
   z.object({ success: z.literal(false) }),
   z.object({ success: z.literal(true), transcript: zTranscript }),
 ]);
-/** Response type for POST `/api/zGetTranscript` */
+/** Response type for POST `/api/getTranscript` */
 export type GetTranscriptResponse = z.infer<typeof zGetTranscriptResponse>;
 
 // Aliases for simple types
