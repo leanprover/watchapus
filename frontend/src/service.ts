@@ -45,13 +45,11 @@ export async function addStudent(
 ): Promise<AddStudentResponse> {
   if (studentName === "") throw new ServiceError("Student name must be non-empty");
 
+  const body: AddStudentResponse = { password, studentName };
   const response = await fetch("/api/addStudent", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      password,
-      studentName,
-    }),
+    body: JSON.stringify(body),
   });
   const data = z.union([zError, zAddStudentResponse]).parse(await response.json());
   if ("error" in data) throw new ServiceError(data.error);
@@ -88,15 +86,16 @@ export async function addGrade(
     throw new ServiceError("Course name is required");
   }
 
+  const body: AddStudentResponse = {
+    password,
+    studentID: studentID.data,
+    courseName,
+    courseGrade: courseGrade.data,
+  };
   const response = await fetch("/api/addGrade", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      password,
-      studentID: studentID.data,
-      courseName,
-      courseGrade: courseGrade.data,
-    }),
+    body: JSON.stringify(body),
   });
   const data = z.union([zError, zAddGradeResponse]).parse(await response.json());
   if ("error" in data) throw new ServiceError(data.error);
@@ -120,13 +119,11 @@ export async function getTranscript(
     throw new ServiceError("Student ID is invalid");
   }
 
+  const body: GetTranscriptResponse = { password, studentID: studentID.data };
   const response = await fetch("/api/getTranscript", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      password,
-      studentID: studentID.data,
-    }),
+    body: JSON.stringify(body),
   });
   const data = z.union([zError, zGetTranscriptResponse]).parse(await response.json());
   if ("error" in data) throw new ServiceError(data.error);
