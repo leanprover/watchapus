@@ -1,5 +1,8 @@
 import {
+  type AddGradeRequest,
+  type AddStudentRequest,
   type AddStudentResponse,
+  type GetTranscriptRequest,
   type GetTranscriptResponse,
   zAddGradeResponse,
   zAddStudentResponse,
@@ -45,7 +48,7 @@ export async function addStudent(
 ): Promise<AddStudentResponse> {
   if (studentName === "") throw new ServiceError("Student name must be non-empty");
 
-  const body: AddStudentResponse = { password, studentName };
+  const body: AddStudentRequest = { password, studentName };
   const response = await fetch("/api/addStudent", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -86,7 +89,7 @@ export async function addGrade(
     throw new ServiceError("Course name is required");
   }
 
-  const body: AddStudentResponse = {
+  const body: AddGradeRequest = {
     password,
     studentID: studentID.data,
     courseName,
@@ -119,7 +122,7 @@ export async function getTranscript(
     throw new ServiceError("Student ID is invalid");
   }
 
-  const body: GetTranscriptResponse = { password, studentID: studentID.data };
+  const body: GetTranscriptRequest = { password, studentID: studentID.data };
   const response = await fetch("/api/getTranscript", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
