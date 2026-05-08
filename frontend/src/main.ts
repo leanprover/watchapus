@@ -53,5 +53,7 @@ document.querySelector<HTMLFormElement>("#viewTranscript")!.onsubmit = (ev) => {
         }
       }
     })
-    .catch((err: unknown) => (showGetTranscriptDiv.innerText = serviceErrorToStr(err)));
+    .catch((err: unknown) => {
+      showGetTranscriptDiv.innerText = serviceErrorToStr(err);
+    });
 };
