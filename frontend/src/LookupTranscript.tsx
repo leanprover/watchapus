@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { z } from "zod";
 
 import { usePasswordContext } from "./PasswordContext.ts";
 import { getTranscript, serviceErrorToStr, type Transcript } from "./service.ts";
