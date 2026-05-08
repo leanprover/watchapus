@@ -1,7 +1,10 @@
-import type {
-  AddGradeResponse,
-  AddStudentResponse,
-  GetTranscriptResponse,
+import {
+  zAddGradeRequest,
+  zAddStudentRequest,
+  zGetTranscriptRequest,
+  type AddGradeResponse,
+  type AddStudentResponse,
+  type GetTranscriptResponse,
 } from "@sourdough/shared";
 import express from "express";
 import { z } from "zod";
@@ -14,12 +17,8 @@ app.use(express.json());
 const db = new TranscriptDB();
 
 /* Handle API requests to create a new student record */
-const zAddStudentBody = z.object({
-  password: z.string(),
-  studentName: z.string(),
-});
 app.post("/api/addStudent", (req, res) => {
-  const body = zAddStudentBody.safeParse(req.body);
+  const body = zAddStudentRequest.safeParse(req.body);
   if (!body.success) {
     res.status(400).send({ error: "Poorly-formed request" });
   } else if (!checkPassword(body.data.password)) {
@@ -32,15 +31,8 @@ app.post("/api/addStudent", (req, res) => {
   }
 });
 
-/* Handle API requests to add a grade to a student */
-const zAddGradeBody = z.object({
-  password: z.string(),
-  studentID: z.int().gte(0),
-  courseName: z.string(),
-  courseGrade: z.number().gte(0).lte(100),
-});
 app.post("/api/addGrade", (req, res) => {
-  const body = zAddGradeBody.safeParse(req.body);
+  const body = zAddGradeRequest.safeParse(req.body);
   if (!body.success) {
     res.status(400).send({ error: "Poorly-formed request" });
   } else if (!checkPassword(body.data.password)) {
@@ -57,13 +49,8 @@ app.post("/api/addGrade", (req, res) => {
   }
 });
 
-/* Handle API requests to retrieve a student transcript */
-const zGetTranscriptBody = z.object({
-  password: z.string(),
-  studentID: z.int().gte(0),
-});
 app.post("/api/getTranscript", (req, res) => {
-  const body = zGetTranscriptBody.safeParse(req.body);
+  const body = zGetTranscriptRequest.safeParse(req.body);
   if (!body.success) {
     res.status(400).send({ error: "Poorly-formed request" });
   } else if (!checkPassword(body.data.password)) {
