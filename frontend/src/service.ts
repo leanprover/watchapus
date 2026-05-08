@@ -102,7 +102,10 @@ export async function addGrade(
   if (!data.success) throw new ServiceError(`Failed to add grade for this student`);
 }
 
-/** Inferred Transcript type must be identitical to the Transcript from src/types.ts */
+/**
+ * This inferred Transcript type must be identical to the Transcript type from
+ * in src/types.ts
+ */
 export const zTranscript = z.object({
   student: z.object({ studentID: z.int(), studentName: z.string() }),
   grades: z.array(z.object({ course: z.string(), grade: z.number() })),
