@@ -2,14 +2,11 @@ import { useState } from "react";
 import { z } from "zod";
 
 import { usePasswordContext } from "./PasswordContext.ts";
-import { getTranscript, serviceErrorToStr, zTranscript } from "./service.ts";
+import { getTranscript, serviceErrorToStr, type Transcript } from "./service.ts";
 
 export default function LookupTranscript() {
   const [feedback, setFeedback] = useState<
-    | null
-    | { error: string }
-    | { success: false }
-    | { success: true; transcript: z.infer<typeof zTranscript> }
+    null | { error: string } | { success: false } | { success: true; transcript: Transcript }
   >(null);
   const [studentID, setStudentID] = useState("");
   const password = usePasswordContext();
