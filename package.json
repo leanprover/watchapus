@@ -10,7 +10,7 @@
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "test": "vitest run --coverage",
-    "dev": "node --watch ./src/server.ts",
+    "dev": "NODE_ENV=development node --watch ./src/server.ts",
     "build": "echo 'nothing to do to build, run `npm start`'",
     "start": "NODE_ENV=production node ./src/server.ts"
   },
