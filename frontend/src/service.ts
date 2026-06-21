@@ -8,7 +8,7 @@ import {
   zAddStudentResponse,
   zError,
   zGetTranscriptResponse,
-} from "@sourdough/shared";
+} from "@repo/shared";
 import { z } from "zod";
 
 export class ServiceError extends Error {}

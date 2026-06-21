@@ -1,4 +1,4 @@
-import type { Transcript } from "@sourdough/shared";
+import type { Transcript } from "@repo/shared";
 import { useState } from "react";
 
 import { usePasswordContext } from "./PasswordContext.ts";

@@ -5,7 +5,7 @@ import {
   zAddGradeRequest,
   zAddStudentRequest,
   zGetTranscriptRequest,
-} from "@sourdough/shared";
+} from "@repo/shared";
 import express from "express";
 
 import { checkPassword } from "./auth.service.ts";
