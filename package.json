@@ -1,7 +1,6 @@
 {
   "name": "sourdough",
   "version": "1.0.0",
-  "description": "Sourdough Starter Code",
   "type": "module",
   "scripts": {
     "check": "npm-run-all check:*",
@@ -21,7 +20,6 @@
     "playwright": "playwright test --ui",
     "start": "NODE_ENV=production node ./src/server.ts"
   },
-  "author": "Rob Simmons",
   "devDependencies": {
     "@eslint/js": "^10.0.0",
     "@playwright/test": "^1.58.1",
