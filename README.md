@@ -42,8 +42,8 @@ Notable exceptions to this principle:
   configuration, that's a reasonable trade. Things are going to inevitably get
   copy-pasted, and so the fewer copies of configuration files there are, the
   better. Necessary changes should be minimal, clean diffs, for example when
-  we want to have server code that can to rely on node's definitions while
-  shared code cannot.
+  we want to have server code that can rely on node's definitions while shared
+  code cannot.
 
   This is why the `.vscode/settings.json` applies Prettier to html and css
   files even though that's not relevant to the base project, and why
