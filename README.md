@@ -86,7 +86,8 @@ The Express server's API has the following endpoints:
 The base project configuration follows a philosophy of "minimalism, mostly."
 Project configuration should be minimal and have a bias towards implicit
 defaults. Deviations from this principle should be justified and documented
-(here or elsewhere).
+(here or elsewhere). The project should work on the latest long-term supported
+version of Node (this is v24 as of mid-2026).
 
 Notable exceptions to this principle:
 
