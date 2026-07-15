@@ -1,4 +1,6 @@
 {
+  "name": "watchapus",
+  "version": "1.0.0",
   "workspaces": [
     "frontend",
     "server",
