@@ -1,69 +1,86 @@
-import {
-  type AddGradeResponse,
-  type AddStudentResponse,
-  type GetTranscriptResponse,
-  zAddGradeRequest,
-  zAddStudentRequest,
-  zGetTranscriptRequest,
-} from "@repo/shared";
 import express from "express";
 
-import { checkPassword } from "./auth.service.ts";
-import { TranscriptDB } from "./transcript.service.ts";
+import { execFile } from "child_process";
+import { promisify } from "util";
 
 export const app = express();
 app.use(express.json());
-const db = new TranscriptDB();
 
-/* Handle API requests to create a new student record */
-app.post("/api/addStudent", (req, res) => {
-  const body = zAddStudentRequest.safeParse(req.body);
-  if (!body.success) {
-    res.status(400).send({ error: "Poorly-formed request" });
-  } else if (!checkPassword(body.data.password)) {
-    res.status(403).send({ error: "Invalid credentials" });
-  } else {
-    const response: AddStudentResponse = {
-      studentID: db.addStudent(body.data.studentName),
+const execFileAsync = promisify(execFile);
+
+async function callPS() {
+  const { stdout, stderr } = await execFileAsync("ps", [
+    "-C",
+    "lean,lake",
+    "-o",
+    "user,pid,ppid,lstart,times,uss,pss,pmem,command",
+  ]);
+
+  if (stderr.trim() !== "") {
+    console.error(`Failing lsp infodump due to output on stderr: ${stderr}`);
+  }
+
+  const [_start, ...rest] = stdout.trim().split("\n");
+
+  return rest.map((line) => {
+    const lineparts = line.match(
+      /^([^ ]+) +(\d+) +(\d+) +([^ ]+ +[^ ]+ +[0-9]+ +[0-9:]+ +[0-9]+) +(\d+) +(\d+) +(\d+) +([0-9.]+)+ +(.*)$/,
+    );
+    if (!lineparts) {
+      console.error(`Failing lsp infodump due to unexpected ps output: ${line}`);
+      throw new Error("ps output did not have expected format '" + line);
+    }
+    const [_match, user, pid, ppid, lstart, times, uss, pss, pmem, command] = lineparts;
+    return {
+      user: user!,
+      pid: Number(pid),
+      ppid: Number(ppid),
+      lstart: new Date(lstart!),
+      times: Number(times),
+      uss: Number(uss),
+      pss: Number(pss),
+      pmem: Number(pmem),
+      command: command!,
     };
-    res.send(response);
-  }
-});
+  });
+}
 
-/* Handle API requests to add a grade to a student */
-app.post("/api/addGrade", (req, res) => {
-  const body = zAddGradeRequest.safeParse(req.body);
-  if (!body.success) {
-    res.status(400).send({ error: "Poorly-formed request" });
-  } else if (!checkPassword(body.data.password)) {
-    res.status(403).send({ error: "Invalid credentials" });
-  } else {
-    let response: AddGradeResponse;
-    try {
-      db.addGrade(body.data.studentID, body.data.courseName, body.data.courseGrade);
-      response = { success: true };
-    } catch {
-      response = { success: false };
-    }
-    res.send(response);
-  }
-});
+type PSData = Awaited<ReturnType<typeof callPS>>[number];
+type ServerData = PSData & { lake?: PSData; workers: PSData[] };
 
-/* Handle API requests to retrieve a student transcript */
-app.post("/api/getTranscript", (req, res) => {
-  const body = zGetTranscriptRequest.safeParse(req.body);
-  if (!body.success) {
-    res.status(400).send({ error: "Poorly-formed request" });
-  } else if (!checkPassword(body.data.password)) {
-    res.status(403).send({ error: "Invalid credentials" });
-  } else {
-    let response: GetTranscriptResponse;
-    try {
-      const transcript = db.getTranscript(body.data.studentID);
-      response = { success: true, transcript };
-    } catch {
-      response = { success: false };
-    }
-    res.send(response);
+function processPS(data: PSData[]) {
+  const lakes = data.filter(({ command }) => command.match(/^(\/?([^ /]+\/)+lake serve*)/));
+  const servers = data.filter(({ command }) => command.match(/^(\/?([^ /]+\/)+lean --server*)/));
+  const workers = data.filter(({ command }) => command.match(/^(\/?([^ /]+\/)+lean --worker*)/));
+
+  const lakesMap: Map<number, PSData> = new Map();
+  for (const lake of lakes) {
+    lakesMap.set(lake.pid, lake);
   }
+
+  const serverMap: Map<number, ServerData> = new Map();
+  for (const server of servers) {
+    serverMap.set(server.pid, { ...server, lake: lakesMap.get(server.ppid), workers: [] });
+  }
+
+  for (const worker of workers) {
+    const serverWorkers = serverMap.get(worker.ppid)?.workers;
+    if (serverWorkers) {
+      serverWorkers.push(worker);
+    }
+  }
+
+  const userMap: { [user: string]: ServerData[] } = {};
+  for (const server of serverMap.values()) {
+    const user = userMap[server.user] ?? [];
+    userMap[server.user] = user;
+    user.push(server);
+  }
+
+  return userMap;
+}
+
+app.get("/api/lsp/info", async (req, res) => {
+  const psData = await callPS();
+  res.send(processPS(psData));
 });
