@@ -96,14 +96,17 @@ app.get("/watchapus/api/info", async (req, res) => {
 app.get("/watchapus/api/metrics.prom", async (req, res) => {
   res.set("Content-Type", "text/plain; charset=ascii");
   const data = processPS(await callPS())["lean4web"] ?? [];
+  const watchdogUSS = data.reduce((uss, e) => uss + e.uss, 0);
+  const watchdogPSS = data.reduce((pss, e) => pss + e.pss, 0);
+  const watcherUSS = data.reduce((uss, e) => e.workers.reduce((uss, e) => uss + e.uss, uss), 0);
+  const watcherPSS = data.reduce((pss, e) => e.workers.reduce((pss, e) => pss + e.pss, pss), 0);
   res.send(
     Object.entries({
       lean4web_lsp_server_watchdog_count: data.length,
-      lean4web_lsp_server_watchdog_uss_bytes:
-        data.reduce((uss, entry) => uss + entry.uss, 0) * 1024,
-      lean4web_lsp_server_watcher_uss_bytes:
-        data.reduce((uss, entry) => entry.workers.reduce((uss, entry) => uss + entry.uss, uss), 0) *
-        1024,
+      lean4web_lsp_server_watchdog_uss_bytes: watchdogUSS * 1024,
+      lean4web_lsp_server_watchdog_shared_bytes: (watchdogPSS - watchdogUSS) * 1024,
+      lean4web_lsp_server_watcher_uss_bytes: watcherUSS * 1024,
+      lean4web_lsp_server_watcher_shared_bytes: (watcherPSS - watcherUSS) * 1024,
     })
       .map(([key, value]) => `${key} ${value}\n`)
       .toSorted()
