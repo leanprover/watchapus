@@ -22,6 +22,7 @@ async function callPS() {
     if (ps.stderr.trim() !== "") {
       throw new Error(`Failing lsp infodump due to output on stderr: ${ps.stderr}`);
     }
+    console.log(ps.stdout);
     stdout = ps.stdout;
   } catch (e) {
     console.error(`ps returned ${e instanceof Error ? e.message : String(e)}`);
