@@ -9,15 +9,23 @@ app.use(express.json());
 const execFileAsync = promisify(execFile);
 
 async function callPS() {
-  const { stdout, stderr } = await execFileAsync("ps", [
-    "-C",
-    "lean,lake",
-    "-o",
-    "user,pid,ppid,lstart,times,uss,pss,pmem,command",
-  ]);
+  let stdout: string;
 
-  if (stderr.trim() !== "") {
-    console.error(`Failing lsp infodump due to output on stderr: ${stderr}`);
+  try {
+    const ps = await execFileAsync("ps", [
+      "-C",
+      "lean,lake",
+      "-o",
+      "user,pid,ppid,lstart,times,uss,pss,pmem,command",
+    ]);
+
+    if (ps.stderr.trim() !== "") {
+      throw new Error(`Failing lsp infodump due to output on stderr: ${ps.stderr}`);
+    }
+    stdout = ps.stdout;
+  } catch (e) {
+    console.error(`ps returned ${e instanceof Error ? e.message : String(e)}`);
+    stdout = "";
   }
 
   const [_start, ...rest] = stdout.trim().split("\n");
