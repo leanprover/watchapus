@@ -4,9 +4,20 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import App from "./App.tsx";
+import { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";
+
+export const system = createSystem(defaultConfig, {
+  theme: {
+    recipes: {
+      link: { base: { colorPalette: "teal" } },
+    },
+  },
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <ChakraProvider value={system}>
+      <App />
+    </ChakraProvider>
   </StrictMode>,
 );

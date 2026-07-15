@@ -43,7 +43,7 @@ async function callPS() {
       user: user!,
       pid: Number(pid),
       ppid: Number(ppid),
-      lstart: new Date(lstart!),
+      duration: (Date.now() - new Date(lstart!).getTime()) / (1000 * 60 * 60),
       times: Number(times),
       uss: Number(uss),
       pss: Number(pss),
@@ -83,6 +83,13 @@ function processPS(data: PSData[]) {
     const user = userMap[server.user] ?? [];
     userMap[server.user] = user;
     user.push(server);
+  }
+
+  for (const watchdogs of Object.values(userMap)) {
+    watchdogs.sort((r1, r2) => r2.duration - r1.duration);
+    for (const watchdog of watchdogs) {
+      watchdog.workers.sort((r1, r2) => r2.duration - r1.duration);
+    }
   }
 
   return userMap;
