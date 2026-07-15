@@ -3,9 +3,10 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
+  base: "/watchapus",
   server: {
     proxy: {
-      "/api": `http://localhost:3000`,
+      "/watchapus/api": `http://localhost:3000`,
     },
   },
 });

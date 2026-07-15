@@ -19,8 +19,8 @@ import { app } from "./app.ts";
 //    matter what you do.
 if (process.env.NODE_ENV === "production") {
   // In production mode, we want to serve the frontend code from Express
-  app.use(express.static(path.join(import.meta.dirname, "../../frontend/dist")));
-  app.get(/(.*)/, (req, res) =>
+  app.use("/watchapus", express.static(path.join(import.meta.dirname, "../../frontend/dist")));
+  app.get(/\/watchapus\/(.*)/, (req, res) =>
     res.sendFile(path.join(import.meta.dirname, "../../frontend/dist/index.html")),
   );
 } else {

@@ -80,7 +80,7 @@ function processPS(data: PSData[]) {
   return userMap;
 }
 
-app.get("/api/lsp/info", async (req, res) => {
+app.get("/watchapus/api/info", async (req, res) => {
   const psData = await callPS();
   res.send(processPS(psData));
 });
