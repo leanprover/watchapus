@@ -22,7 +22,6 @@ async function callPS() {
     if (ps.stderr.trim() !== "") {
       throw new Error(`Failing lsp infodump due to output on stderr: ${ps.stderr}`);
     }
-    console.log(ps.stdout);
     stdout = ps.stdout;
   } catch (e) {
     console.error(`ps returned ${e instanceof Error ? e.message : String(e)}`);
@@ -58,9 +57,9 @@ type PSData = Awaited<ReturnType<typeof callPS>>[number];
 type ServerData = PSData & { lake?: PSData; workers: PSData[] };
 
 function processPS(data: PSData[]) {
-  const lakes = data.filter(({ command }) => command.match(/^(\/?([^ /]+\/)+lake serve*)/));
-  const servers = data.filter(({ command }) => command.match(/^(\/?([^ /]+\/)+lean --server*)/));
-  const workers = data.filter(({ command }) => command.match(/^(\/?([^ /]+\/)+lean --worker*)/));
+  const lakes = data.filter(({ command }) => command.match(/^(\/?([^ /]+\/)*lake serve*)/));
+  const servers = data.filter(({ command }) => command.match(/^(\/?([^ /]+\/)*lean --server*)/));
+  const workers = data.filter(({ command }) => command.match(/^(\/?([^ /]+\/)*lean --worker*)/));
 
   const lakesMap: Map<number, PSData> = new Map();
   for (const lake of lakes) {
