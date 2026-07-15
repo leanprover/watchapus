@@ -103,6 +103,9 @@ app.get("/watchapus/api/metrics.prom", async (req, res) => {
         (uss, entry) => entry.workers.reduce((uss, entry) => uss + entry.uss, uss),
         0,
       ),
-    }),
+    })
+      .map(([key, value]) => `${key} ${value}\n`)
+      .toSorted()
+      .join(""),
   );
 });
