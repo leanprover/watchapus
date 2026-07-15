@@ -94,6 +94,7 @@ app.get("/watchapus/api/info", async (req, res) => {
 });
 
 app.get("/watchapus/api/metrics.prom", async (req, res) => {
+  res.set("Content-Type", "text/plain; charset=ascii");
   const data = processPS(await callPS())["lean4web"] ?? [];
   res.send(
     Object.entries({
