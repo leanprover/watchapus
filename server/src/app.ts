@@ -2,6 +2,8 @@ import express from "express";
 
 import { execFile } from "child_process";
 import { promisify } from "util";
+import { env } from "process";
+import { MOCK_PS, mockNow } from "./mock.ts";
 
 export const app = express();
 app.use(express.json());
@@ -10,22 +12,30 @@ const execFileAsync = promisify(execFile);
 
 async function callPS() {
   let stdout: string;
+  let now: number;
 
-  try {
-    const ps = await execFileAsync("ps", [
-      "-C",
-      "lean,lake",
-      "-o",
-      "user,pid,ppid,lstart,times,uss,pss,pmem,command",
-    ]);
+  if (env.MOCK_PS) {
+    try {
+      const ps = await execFileAsync("ps", [
+        "-C",
+        "lean,lake",
+        "-o",
+        "user,pid,ppid,lstart,times,uss,pss,pmem,command",
+      ]);
 
-    if (ps.stderr.trim() !== "") {
-      throw new Error(`Failing lsp infodump due to output on stderr: ${ps.stderr}`);
+      if (ps.stderr.trim() !== "") {
+        throw new Error(`Failing lsp infodump due to output on stderr: ${ps.stderr}`);
+      }
+      stdout = ps.stdout;
+      now = Date.now();
+    } catch (e) {
+      console.error(`ps returned ${e instanceof Error ? e.message : String(e)}`);
+      stdout = "";
+      now = Date.now();
     }
-    stdout = ps.stdout;
-  } catch (e) {
-    console.error(`ps returned ${e instanceof Error ? e.message : String(e)}`);
-    stdout = "";
+  } else {
+    stdout = MOCK_PS;
+    now = mockNow();
   }
 
   const [_start, ...rest] = stdout.trim().split("\n");
@@ -43,7 +53,7 @@ async function callPS() {
       user: user!,
       pid: Number(pid),
       ppid: Number(ppid),
-      duration: (Date.now() - new Date(lstart!).getTime()) / (1000 * 60 * 60),
+      duration: (now - new Date(lstart!).getTime()) / (1000 * 60 * 60),
       times: Number(times),
       uss: Number(uss),
       pss: Number(pss),
