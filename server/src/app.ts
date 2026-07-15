@@ -92,3 +92,17 @@ app.get("/watchapus/api/info", async (req, res) => {
   const psData = await callPS();
   res.send(processPS(psData));
 });
+
+app.get("/watchapus/api/metrics.prom", async (req, res) => {
+  const data = processPS(await callPS())["lean4web"] ?? [];
+  res.send(
+    Object.entries({
+      lean4web_lsp_server_watchdog_count: data.length,
+      lean4web_lsp_server_watchdog_uss: data.reduce((uss, entry) => uss + entry.uss, 0),
+      lean4web_lsp_server_watcher_uss: data.reduce(
+        (uss, entry) => entry.workers.reduce((uss, entry) => uss + entry.uss, uss),
+        0,
+      ),
+    }),
+  );
+});

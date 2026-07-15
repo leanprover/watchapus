@@ -105,12 +105,6 @@ export default defineConfig([
           leadingUnderscore: "require",
         },
         {
-          // No limits on things like 'Content-Type' in a fetch object
-          selector: "objectLiteralProperty",
-          modifiers: ["requiresQuotes"],
-          format: null,
-        },
-        {
           // Usually we want to stick with camelCase for global variables, and
           // UPPER_CASE for global constants, but there are many exceptions
           selector: ["function", "variable"],
