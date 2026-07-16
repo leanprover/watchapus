@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === "production") {
     "/watchapus",
     express.static(distDir, { setHeaders: (res) => res.setHeader("Cache-Control", "no-store") }),
   );
-  app.get(/\/watchapus\/(.*)/, (req, res) =>
+  app.get(/^\/watchapus\/(.*)/, (req, res) =>
     res.sendFile(path.join(import.meta.dirname, "../../frontend/dist/index.html"), {
       headers: { "Cache-Control": "no-store" },
     }),
