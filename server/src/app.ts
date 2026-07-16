@@ -1,10 +1,10 @@
+import { zLspInfoByUser } from "@repo/shared";
 import { execFile } from "child_process";
 import express from "express";
 import { env } from "process";
 import { promisify } from "util";
 
 import { MOCK_PS, mockNow } from "./mock.ts";
-import { zLspInfoByUser } from "@repo/shared";
 
 export const app = express();
 app.use(express.json());

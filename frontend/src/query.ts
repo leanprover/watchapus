@@ -1,5 +1,5 @@
+import { type WatchdogInfo, zLspInfoByUser } from "@repo/shared";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { zLspInfoByUser, type WatchdogInfo } from "@repo/shared";
 
 function findMaxMem(entriess: WatchdogInfo[][]) {
   const maxPss = entriess.reduce(

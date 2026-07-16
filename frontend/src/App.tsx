@@ -1,14 +1,14 @@
 import { Card, Clipboard, Grid, IconButton, Stack } from "@chakra-ui/react";
+import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
+import { faCopy } from "@fortawesome/free-solid-svg-icons/faCopy";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import type { WatchdogInfo } from "@repo/shared";
 import { useAtomValue } from "jotai";
 import { Fragment } from "react/jsx-runtime";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy } from "@fortawesome/free-solid-svg-icons/faCopy";
-import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 
 import LeftPill from "./LeftPill.tsx";
 import { infoQueryAtom } from "./query.ts";
 import RightPill from "./RightPill.tsx";
-import type { WatchdogInfo } from "@repo/shared";
 
 function PidButton({ pid }: { pid: number }) {
   return (
