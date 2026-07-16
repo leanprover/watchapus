@@ -18,10 +18,24 @@ import { app } from "./app.ts";
 //    You can't get any frontend changes to show up in the browser, no
 //    matter what you do.
 if (process.env.NODE_ENV === "production") {
-  // In production mode, we want to serve the frontend code from Express
-  app.use("/watchapus", express.static(path.join(import.meta.dirname, "../../frontend/dist")));
+  const distDir = path.join(import.meta.dirname, "../../frontend/dist");
+
+  // Vite assets get cached, assets not present are 404s
+  app.use(
+    "/watchapus/assets",
+    express.static(path.join(distDir, "assets"), { immutable: true, maxAge: "1y" }),
+  );
+  app.use("/watchapus/assets", (req, res) => res.status(404).end());
+
+  // other files do *not* get cached
+  app.use(
+    "/watchapus",
+    express.static(distDir, { setHeaders: (res) => res.setHeader("Cache-Control", "no-store") }),
+  );
   app.get(/\/watchapus\/(.*)/, (req, res) =>
-    res.sendFile(path.join(import.meta.dirname, "../../frontend/dist/index.html")),
+    res.sendFile(path.join(import.meta.dirname, "../../frontend/dist/index.html"), {
+      headers: { "Cache-Control": "no-store" },
+    }),
   );
 } else {
   app.get("/", (req, res) => {
