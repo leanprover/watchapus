@@ -1,10 +1,10 @@
 import "./style.css";
 
+import { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import App from "./App.tsx";
-import { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";
 
 export const system = createSystem(defaultConfig, {
   theme: {

@@ -1,9 +1,10 @@
-import express from "express";
-
 import { execFile } from "child_process";
-import { promisify } from "util";
+import express from "express";
 import { env } from "process";
+import { promisify } from "util";
+
 import { MOCK_PS, mockNow } from "./mock.ts";
+import { zLspInfoByUser } from "@repo/shared";
 
 export const app = express();
 app.use(express.json());
@@ -15,6 +16,9 @@ async function callPS() {
   let now: number;
 
   if (env.MOCK_PS) {
+    stdout = MOCK_PS;
+    now = mockNow();
+  } else {
     try {
       const ps = await execFileAsync("ps", [
         "-C",
@@ -33,16 +37,13 @@ async function callPS() {
       stdout = "";
       now = Date.now();
     }
-  } else {
-    stdout = MOCK_PS;
-    now = mockNow();
   }
 
   const [_start, ...rest] = stdout.trim().split("\n");
 
   return rest.map((line) => {
     const lineparts = line.match(
-      /^([^ ]+) +(\d+) +(\d+) +([^ ]+ +[^ ]+ +[0-9]+ +[0-9:]+ +[0-9]+) +(\d+) +(\d+) +(\d+) +([0-9.]+)+ +(.*)$/,
+      /^([^ ]+) +(\d+) +(\d+) +([^ ]+ +[^ ]+ +[0-9]+ +[0-9:]+ +[0-9]+) +(\d+) +(\d+) +(\d+) +([0-9.]+) +(.*)$/,
     );
     if (!lineparts) {
       console.error(`Failing lsp infodump due to unexpected ps output: ${line}`);
@@ -53,7 +54,7 @@ async function callPS() {
       user: user!,
       pid: Number(pid),
       ppid: Number(ppid),
-      duration: (now - new Date(lstart!).getTime()) / (1000 * 60 * 60),
+      duration: (now - new Date(lstart!).getTime()) / 1000,
       times: Number(times),
       uss: Number(uss),
       pss: Number(pss),
@@ -102,7 +103,7 @@ function processPS(data: PSData[]) {
     }
   }
 
-  return userMap;
+  return zLspInfoByUser.parse(userMap);
 }
 
 app.get("/watchapus/api/info", async (req, res) => {

@@ -1,107 +1,58 @@
+import { Card, Clipboard, Grid, IconButton, Stack } from "@chakra-ui/react";
 import { useAtomValue } from "jotai";
-import { infoQueryAtom, tz, type DP, type TZ } from "./query.ts";
-import {
-  Box,
-  Card,
-  CodeBlock,
-  createShikiAdapter,
-  Grid,
-  GridItem,
-  Stack,
-  StackSeparator,
-} from "@chakra-ui/react";
+import { Fragment } from "react/jsx-runtime";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCopy } from "@fortawesome/free-solid-svg-icons/faCopy";
+import { faCheck } from "@fortawesome/free-solid-svg-icons/faCheck";
 
-const shikiAdapter = createShikiAdapter({
-  async load() {
-    const { createHighlighter } = await import("shiki");
-    const highlighter = await createHighlighter({
-      langs: ["json"],
-      themes: ["github-dark", "github-light"],
-    });
-    return highlighter;
-  },
-  theme: { light: "github-light", dark: "github-dark" },
-});
+import LeftPill from "./LeftPill.tsx";
+import { infoQueryAtom } from "./query.ts";
+import RightPill from "./RightPill.tsx";
+import type { WatchdogInfo } from "@repo/shared";
 
-interface PillProps {
-  sub?: true;
-  duration: number;
-  contents?: string;
-}
-
-function Pill({ sub, duration, contents }: PillProps) {
-  const consts = sub
-    ? ({ minHeight: "1em", bgColor: "pink.subtle", fontSize: "sm" } as const)
-    : ({ minHeight: "2em", bgColor: "purple.subtle", fontSize: "md" } as const);
-
-  const label = (
-    <Box
-      alignContent="center"
-      minWidth="0"
-      maxWidth="100%"
-      overflow="hidden"
-      textOverflow="ellipsis"
-      whiteSpace="nowrap"
-      height="100%"
-      paddingInline="1em"
-      fontSize={consts.fontSize}
-    >
-      {contents}
-    </Box>
-  );
-
-  if (duration >= 24) {
-    return (
-      <Box
-        minWidth="0"
-        minHeight="2em"
-        bgColor={consts.bgColor}
-        display="flex"
-        justifyContent="flex-end"
-      >
-        {label}
-      </Box>
-    );
-  }
-
+function PidButton({ pid }: { pid: number }) {
   return (
-    <Grid gridTemplateColumns={`${24 - duration}fr ${duration}fr`}>
-      <GridItem />
-      <Box
-        minWidth="0"
-        minHeight="2em"
-        bgColor={consts.bgColor}
-        borderInlineStartRadius="1em"
-        display="flex"
-        justifyContent="flex-end"
-      >
-        {duration > 1 && label}
-      </Box>
-    </Grid>
+    <Clipboard.Root value={String(pid)}>
+      <Clipboard.Trigger asChild>
+        <IconButton
+          size="2xs"
+          variant="subtle"
+          title={`PID ${pid} (click to copy)`}
+          aria-label={`Copy PID ${pid}`}
+        >
+          <Clipboard.Indicator copied={<FontAwesomeIcon icon={faCheck} />}>
+            <FontAwesomeIcon icon={faCopy} />
+          </Clipboard.Indicator>
+        </IconButton>
+      </Clipboard.Trigger>
+    </Clipboard.Root>
   );
 }
 
 interface ReportUserProps {
   user: string;
-  data: DP[];
+  data: WatchdogInfo[];
+  maxPerc: number;
+  maxPss: number;
 }
 
-function ReportUser({ user, data }: ReportUserProps) {
+function ReportUser({ user, data, maxPerc, maxPss }: ReportUserProps) {
   return (
     <Card.Root>
       <Card.Title>{user}</Card.Title>
       <Card.Body>
         <Grid rowGap="2">
-          {data.map(({ pid, duration, times, workers, ...rest }) => (
-            <Grid key={String(pid)} gridTemplateColumns="1fr">
-              <Pill duration={duration} contents={`${Math.floor(duration)}h, ${times}s active`} />
-              {workers.map(({ pid, duration, times }) => (
-                <Pill
-                  sub
-                  key={String(pid)}
-                  duration={duration}
-                  contents={`${Math.floor(duration)}h, ${times}s active`}
-                />
+          {data.map(({ pid, duration, times, workers, uss, pss, pmem, ...rest }) => (
+            <Grid key={String(pid)} gridTemplateColumns="1fr auto 1fr" gridGap="2">
+              <LeftPill duration={duration} times={times} />
+              <PidButton pid={pid} />
+              <RightPill uss={uss} pss={pss} pmem={pmem} maxPerc={maxPerc} maxPss={maxPss} />
+              {workers.map(({ pid, duration, times, uss, pss, pmem }) => (
+                <Fragment key={String(pid)}>
+                  <LeftPill sub duration={duration} times={times} />
+                  <PidButton pid={pid} />
+                  <RightPill uss={uss} pss={pss} pmem={pmem} maxPerc={maxPerc} maxPss={maxPss} />
+                </Fragment>
               ))}
             </Grid>
           ))}
@@ -120,25 +71,15 @@ export default function App() {
     <>
       <Stack maxWidth="4xl">
         {query.data.data.map(([user, data]) => (
-          <ReportUser key={user} user={user} data={data} />
+          <ReportUser
+            key={user}
+            user={user}
+            data={data}
+            maxPerc={query.data.maxPerc}
+            maxPss={query.data.maxPss}
+          />
         ))}
       </Stack>
-      <CodeBlock.AdapterProvider value={shikiAdapter}>
-        <CodeBlock.Root code={JSON.stringify(query.data.json, undefined, 3)} language={"json"}>
-          <CodeBlock.Header>
-            <CodeBlock.Title />
-            <CodeBlock.Control>
-              <CodeBlock.CopyTrigger />
-              <CodeBlock.CollapseTrigger />
-            </CodeBlock.Control>
-          </CodeBlock.Header>
-          <CodeBlock.Content>
-            <CodeBlock.Code>
-              <CodeBlock.CodeText />
-            </CodeBlock.Code>
-          </CodeBlock.Content>
-        </CodeBlock.Root>
-      </CodeBlock.AdapterProvider>
     </>
   );
 }

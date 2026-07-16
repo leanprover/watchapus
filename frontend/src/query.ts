@@ -1,26 +1,47 @@
 import { atomWithQuery } from "jotai-tanstack-query";
-import { z } from "zod";
+import { zLspInfoByUser, type WatchdogInfo } from "@repo/shared";
 
-export const dp = z.object({
-  duration: z.number(),
-  times: z.number(),
-  pid: z.number(),
-  workers: z.array(z.object({ duration: z.number(), times: z.number(), pid: z.number() })),
-});
-export type DP = z.infer<typeof dp>;
+function findMaxMem(entriess: WatchdogInfo[][]) {
+  const maxPss = entriess.reduce(
+    (soFar, entries) =>
+      entries.reduce(
+        (soFar, entry) =>
+          Math.max(
+            entry.pss,
+            entry.workers.reduce((soFar, entry) => Math.max(entry.pss, soFar), soFar),
+          ),
+        soFar,
+      ),
+    0.01,
+  );
+  const maxPerc = entriess.reduce(
+    (soFar, entries) =>
+      entries.reduce(
+        (soFar, entry) =>
+          Math.max(
+            entry.pmem,
+            entry.workers.reduce((soFar, entry) => Math.max(entry.pmem, soFar), soFar),
+          ),
+        soFar,
+      ),
+    0.01,
+  );
 
-export const tz = z.record(z.string(), z.array(dp));
-export type TZ = z.infer<typeof tz>;
+  return { maxPss, maxPerc };
+}
 
 export const infoQueryAtom = atomWithQuery((get) => ({
   queryKey: ["api-info"],
   queryFn: async () => {
-    const res = await fetch("/watchapus/api/info");
-    const json: any = await res.json();
+    const result = await fetch("/watchapus/api/info");
+    const userInfo = zLspInfoByUser.parse(await result.json());
+
+    const { maxPss, maxPerc } = findMaxMem(Object.values(userInfo));
 
     return {
-      data: Object.entries(tz.parse(json)).toSorted((a, b) => a[0].localeCompare(b[0])),
-      json,
+      data: Object.entries(userInfo).toSorted((a, b) => a[0].localeCompare(b[0])),
+      maxPss,
+      maxPerc,
     };
   },
 }));

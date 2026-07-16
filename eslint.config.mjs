@@ -105,6 +105,11 @@ export default defineConfig([
           leadingUnderscore: "require",
         },
         {
+          // No limits on names that might be specified by someone else's JSON
+          selector: "objectLiteralProperty",
+          format: null,
+        },
+        {
           // Usually we want to stick with camelCase for global variables, and
           // UPPER_CASE for global constants, but there are many exceptions
           selector: ["function", "variable"],
